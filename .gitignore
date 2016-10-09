@@ -1,0 +1,10 @@
+node_modules
+.project
+.DS_Store
+.sublime-grunt.cache
+bower_components
+doc/_build
+.grunt
+.idea
+dist
+srcmaps
