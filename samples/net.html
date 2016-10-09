@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <link href="./css/jquery.snippet.min.css" rel="stylesheet">
+    <script type="text/javascript" src="js/snippet/jquery.snippet.min.js"></script>
+
+    <script type="text/javascript" src="js/excanvas.js"></script>
+    <!--<script type="text/javascript" src="js/jtopo-0.3.0-min.js"></script>-->
+    <script type="text/javascript" src="js/menu.js"></script>
+    <script type="text/javascript" src="../src/jtopo.js"></script>
+    <script type="text/javascript" src="../src/jtopo.element.js"></script>
+    <script type="text/javascript" src="../src/jtopo.abstractnode.js"></script>
+    <script type="text/javascript" src="../src/jtopo.animation.js"></script>
+    <script type="text/javascript" src="../src/jtopo.link.js"></script>
+    <script type="text/javascript" src="../src/jtopo.node.js"></script>
+    <script type="text/javascript" src="../src/jtopo.util.js"></script>
+    <script type="text/javascript" src="../src/jtopo.container.js"></script>
+    <script type="text/javascript" src="../src/jtopo.databox.js"></script>
+
+    <script type="text/javascript" src="../src/jtopo.layout.js"></script>
+
+    <script type="text/javascript">
+
+
+        $(document).ready(function(){
+            var box = new JTopo.DataBox('dataBox', $("#canvas")[0]);
+            //box.isShowRange = false;
+            //var canvas = document.getElementById('canvas');
+            //var stage = new JTopo.Stage(canvas);
+            //显示工具栏
+            //showJTopoToobar(stage);
+            //var scene = new JTopo.Scene();
+            //scene.background = './img/net/bg.jpg';
+
+            function node(x, y, img, name){
+                var node = new JTopo.Node(name);
+                node.setImage('./img/net/' + img, true);
+                node.setLocation(x, y);
+                node.fontColor = "0,0,0"
+                box.add(node);
+                return node;
+            }
+
+            function linkNode(nodeA, nodeZ){
+                var link = new JTopo.FoldLink(nodeA, nodeZ);
+                link.lineWidth = 1;
+                link.strokeColor = '97,97,97';
+                box.add(link);
+                return link;
+            }
+
+            var x = 50;
+            var x_inc_100 = 100;
+
+            var y = 250;
+            var y_inc_100 = 100;
+
+            var b1 = node(x, y, 'basic.png', '基础网络');
+            var i1 = node(x = x+x_inc_100, y, 'internet.png', '公网IP');
+            var lb1 = node(x = x+x_inc_100, y, 'lb.png',"负载均衡器");
+            var r1 = node(x = x+x_inc_100, y, 'route.png',"路由器");
+            linkNode(b1, i1);
+            linkNode(i1, lb1);
+            linkNode(lb1, r1);
+
+            x=x+x_inc_100;
+
+            var p0 = node(x, y-2*y_inc_100, 'private_network.png',"内网");
+            linkNode(r1, p0);
+
+            var p1 = node(x, y, 'private_network.png',"内网");
+            linkNode(r1, p1);
+
+            var p2 = node(x, y+2*y_inc_100, 'private_network.png',"内网");
+            linkNode(r1, p2);
+
+            var h01 = node(x+x_inc_100, y-y_inc_100, 'host.png',"web服务");
+            var h02 = node(x+2*x_inc_100, y-y_inc_100, 'host.png',"web服务");
+            var h03 = node(x+3*x_inc_100,y-y_inc_100, 'host.png',"web服务");
+            linkNode(p0, h01);
+            linkNode(p0, h02);
+            linkNode(p0, h03);
+
+
+            var h11 = node(x+x_inc_100, y+y_inc_100, 'host.png',"web服务");
+            var h12 = node(x+2*x_inc_100, y+y_inc_100, 'host.png',"web服务");
+            var h13 = node(x+3*x_inc_100,y+y_inc_100, 'host.png',"web服务");
+            linkNode(p1, h11);
+            linkNode(p1, h12);
+            linkNode(p1, h13);
+
+            var h21 = node(x+x_inc_100, y+3*y_inc_100, 'host.png',"web服务");
+            var h22 = node(x+2*x_inc_100, y+3*y_inc_100, 'host.png',"web服务");
+            var h23 = node(x+3*x_inc_100,y+3*y_inc_100, 'host.png',"web服务");
+            linkNode(p2, h21);
+            linkNode(p2, h22);
+            linkNode(p2, h23);
+
+            box.updateView();
+
+        });
+
+
+
+    </script>
+</head>
+<body>
+<div id="content" style="width: 900px;">
+    <canvas width="900" height="750" id="canvas" ></canvas>
+</div>
+</body>
+</html>
