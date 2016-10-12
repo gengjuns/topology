@@ -37,6 +37,73 @@
 		return getDistance(this.nodeA , this.nodeB);
 	};
 
+	function FabricLink(nodeA, nodeB, fold) {
+		var link = new JTopo.Link(nodeA, nodeB);
+		link.fold = fold;
+		link.draw = function (ctx) {
+			var x1 = this.nodeA.x;
+			var y1 = this.nodeA.y;
+			var x2 = this.nodeB.x;
+			var y2 = this.nodeB.y;
+
+
+			if(x1 == x2){
+				ctx.save();
+				ctx.beginPath();
+				ctx.strokeStyle = 'rgba(' + this.style.strokeStyle + ',' + this.style.alpha + ')';
+				ctx.lineWidth = this.style.lineWidth;
+				ctx.moveTo(this.nodeA.x + this.nodeA.width , this.nodeA.y + this.nodeA.height /2 );
+				ctx.lineTo(this.nodeB.x , this.nodeB.y + this.nodeB.height / 2);
+				ctx.closePath();
+				ctx.stroke();
+				ctx.restore();
+			} else if(y1 == y2){
+				ctx.save();
+				ctx.beginPath();
+				ctx.strokeStyle = 'rgba(' + this.style.strokeStyle + ',' + this.style.alpha + ')';
+				ctx.lineWidth = this.style.lineWidth;
+				ctx.moveTo(this.nodeA.x + this.nodeA.width , this.nodeA.y + this.nodeA.height /2 );
+				ctx.lineTo(this.nodeB.x , this.nodeB.y + this.nodeB.height / 2);
+				ctx.closePath();
+				ctx.stroke();
+				ctx.restore();
+			}else{
+				ctx.save();
+				ctx.beginPath();
+				ctx.strokeStyle = 'rgba(' + this.style.strokeStyle + ',' + this.style.alpha + ')';
+				ctx.lineWidth = this.style.lineWidth;
+				if(this.fold == 'x'){
+					var mx1 = x1;
+					var my1 = y1;
+					var mx2 = x1;
+					var my2 = y1;
+					mx1 = x1 + this.nodeA.width / 2 + (x2 - x1)/2;
+					my1 = y1 + this.nodeA.height / 2;
+					mx2 = mx1;
+					my2 = y2 + this.nodeB.height / 2;
+					ctx.moveTo(x1 + this.nodeA.width, y1+ this.nodeA.height / 2);
+					ctx.lineTo(mx1, my1);
+					ctx.lineTo(mx2, my2);
+					ctx.lineTo(x2, y2+ this.nodeA.height / 2);
+				}else{
+					var mx1 = x1;
+					var my1 = y1;
+					mx1 = x2 + this.nodeA.width / 2;
+					my1 = y1 + this.nodeA.height / 2;
+					ctx.moveTo(x1 + this.nodeA.width, y1+ this.nodeA.height / 2);
+					ctx.lineTo(mx1, my1);
+					ctx.lineTo(x2 + this.nodeB.width / 2, y2);
+				}
+
+				ctx.stroke();
+				ctx.closePath();
+				ctx.restore();
+			}
+		};
+
+		return link;
+	};
+
 	function FoldLink(nodeA, nodeB) {
 		var link = new JTopo.Link(nodeA, nodeB);
 		link.fold = 'x';
@@ -250,6 +317,7 @@
 
 
 	JTopo.Link = Link;
+	JTopo.FabricLink = FabricLink;
 	JTopo.FoldLink = FoldLink;
 	JTopo.CurveLink = CurveLink;
 	JTopo.ArrowsLink = ArrowsLink;

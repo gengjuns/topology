@@ -65,10 +65,10 @@
 		var w = Math.max(this.width, textWidth);
 		ctx.save();
 		ctx.beginPath();
-		ctx.strokeStyle = 'rgba(168,202,255, 0.9)';
-		ctx.fillStyle = 'rgba(168,202,236,0.5)';
+		ctx.strokeStyle = 'rgba(248,31,72, 0.9)';
+		//ctx.fillStyle = 'rgba(168,202,236,0.1)';
 		ctx.rect(-w/2 -3, -this.height/2 -2, w + 6, this.height + 16);
-		ctx.fill();
+		//ctx.fill();
 		ctx.stroke();
 		ctx.closePath();
 		ctx.restore();

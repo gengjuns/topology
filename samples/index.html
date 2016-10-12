@@ -1,113 +1,174 @@
-
 <!DOCTYPE html>
-<html>
-  <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=8" />
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-	<meta http-equiv="Cache-Control" content="no-cache,must-revalidate" />
-	<meta http-equiv="Pragma" content="no-cache" />
-	<meta http-equiv="Expires" content="0" />
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <link href="./css/jquery.snippet.min.css" rel="stylesheet">
 
-    <!-- Le styles -->
-    <link href="./css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-      .sidebar-nav {
-        padding: 9px 0;
-      }
+    <script type="text/javascript" src="js/excanvas.js"></script>
+    <!--<script type="text/javascript" src="js/jtopo-0.3.0-min.js"></script>-->
+    <script type="text/javascript" src="../src/jtopo.js"></script>
+    <script type="text/javascript" src="../src/jtopo.element.js"></script>
+    <script type="text/javascript" src="../src/jtopo.abstractnode.js"></script>
+    <!--<script type="text/javascript" src="../src/jtopo.animation.js"></script>-->
+    <script type="text/javascript" src="../src/jtopo.link.js"></script>
+    <script type="text/javascript" src="../src/jtopo.node.js"></script>
+    <script type="text/javascript" src="../src/jtopo.util.js"></script>
+    <script type="text/javascript" src="../src/jtopo.container.js"></script>
+    <script type="text/javascript" src="../src/jtopo.databox.js"></script>
 
-      @media (max-width: 980px) {
-        /* Enable use of floated navbar text */
-        .navbar-text.pull-right {
-          float: none;
-          padding-left: 5px;
-          padding-right: 5px;
+    <script type="text/javascript" src="../src/jtopo.layout.js"></script>
+    <script type="text/javascript" src="../src/hidpi-canvas.min.js"></script>
+
+    <script type="text/javascript">
+
+        var box = null;
+        $(document).ready(function () {
+            box = new JTopo.DataBox('dataBox', $("#canvas")[0]);
+            //box.isShowRange = false;
+            //var canvas = document.getElementById('canvas');
+            //var stage = new JTopo.Stage(canvas);
+            //显示工具栏
+            //showJTopoToobar(stage);
+            //var scene = new JTopo.Scene();
+            //scene.background = './img/net/bg.jpg';
+
+            var x = 50;
+            var x_inc_100 = 100;
+
+            var y = 250;
+            var y_inc_100 = 100;
+            node(50, 50, 'host.png', 'html');
+            var b1 = node(x, y, 'basic.png', '基础网络');
+            var i1 = node(x = x + x_inc_100, y, 'internet.png', '公网IP');
+            var lb1 = node(x = x + x_inc_100, y, 'lb.png', "负载均衡器");
+            var r1 = node(x = x + x_inc_100, y, 'route.png', "路由器");
+            linkNodeX(b1, i1);
+            linkNodeX(i1, lb1);
+            linkNodeX(lb1, r1);
+
+            x = x + x_inc_100;
+
+            var p0 = node(x, y - 2 * y_inc_100, 'private_network.png', "内网");
+            linkNodeX(r1, p0);
+
+            var p1 = node(x, y, 'private_network.png', "内网");
+            linkNodeX(r1, p1);
+
+            var p2 = node(x, y + 2 * y_inc_100, 'private_network.png', "内网");
+            linkNodeX(r1, p2);
+
+            var h01 = node(x + x_inc_100, y - y_inc_100, 'host.png', "web服务");
+            var h02 = node(x + 2 * x_inc_100, y - y_inc_100, 'host.png', "web服务");
+            var h03 = node(x + 3 * x_inc_100, y - y_inc_100, 'host.png', "web服务");
+            linkNodeY(p0, h01);
+            linkNodeY(p0, h02);
+            linkNodeY(p0, h03);
+
+
+            var h11 = node(x + x_inc_100, y + y_inc_100, 'host.png', "web服务");
+            var h12 = node(x + 2 * x_inc_100, y + y_inc_100, 'host.png', "web服务");
+            var h13 = node(x + 3 * x_inc_100, y + y_inc_100, 'host.png', "web服务");
+            linkNodeY(p1, h11);
+            linkNodeY(p1, h12);
+            linkNodeY(p1, h13);
+
+            var h21 = node(x + x_inc_100, y + 3 * y_inc_100, 'host.png', "web服务");
+            var h22 = node(x + 2 * x_inc_100, y + 3 * y_inc_100, 'host.png', "web服务");
+            var h23 = node(x + 3 * x_inc_100, y + 3 * y_inc_100, 'host.png', "web服务");
+            linkNodeY(p2, h21);
+            linkNodeY(p2, h22);
+            linkNodeY(p2, h23);
+
+            box.updateView();
+
+        });
+
+
+        function node(x, y, img, name) {
+            var node = new JTopo.Node(name);
+            node.setImage('./img/net/' + img, true);
+            node.setLocation(x, y);
+            node.fontColor = "0,0,0"
+            box.add(node);
+            return node;
         }
-      }
-    </style>
-    <link href="./css/bootstrap-responsive.css" rel="stylesheet">
 
-	<script type="text/javascript" src="js/jquery.js"></script>
-	<link href="./css/jquery.snippet.min.css" rel="stylesheet">
-	<script type="text/javascript" src="js/snippet/jquery.snippet.min.js"></script>
+        function linkNodeX(nodeA, nodeZ) {
+            var link = new JTopo.FabricLink(nodeA, nodeZ, 'x');
+            link.lineWidth = 1;
+            link.strokeColor = '97,97,97';
+            box.add(link);
+            return link;
+        }
 
-	<script type="text/javascript" src="js/excanvas.js"></script>
-	<script type="text/javascript" src="js/jtopo-0.3.0-min.js"></script>
-	<script type="text/javascript" src="js/menu.js"></script>
-	<script id='code'>
-		
-		/*
-		 * Usage:
-		 * <script type="text/javascript" src="jquery.js"> < /script>
-		 * <script type="text/javascript" src="jtopo-0.3.0-min.js"> </ script>
-		 */
+        function linkNodeY(nodeA, nodeZ) {
+            var link = new JTopo.FabricLink(nodeA, nodeZ, 'y');
+            link.lineWidth = 1;
+            link.strokeColor = '97,97,97';
+            box.add(link);
+            return link;
+        }
 
-		$(document).ready(function(){					
-			var box = new JTopo.DataBox('dataBox', $("#canvas")[0]);
-			box.isShowRange = false;
-			var node = new JTopo.Node('Hello world!');
-			node.setLocation(387, 270);
-			box.add(node);
+        function allowDrop(ev) {
+            ev.preventDefault();
+            var nodes = box.nodes;
+            var xy = JTopo.util.getXY(box, ev);
+            var x = xy.x;
+            var y = xy.y;
+            var dx = (x - box.startDragMouseX);
+            var dy = (y - box.startDragMouseY);
+            //console.log('nodes length: ' + nodes.length)
+            for (var i = nodes.length - 1; i >= 0; i--) {
+                var node = nodes[i];
+                //console.log('check: ' + (node.x + node.width))
+                //console.log('box widht: ' + (box.canvas.width))
 
-			box.updateView();
-		});
-	</script>
-	<style>
-		canvas {
-			background-color:#EEEEEE;
-			border:1px solid #444;
-		}
-	</style>
-  </head>
+                if (node.x + node.width < 0 || node.x > box.canvas.width) continue;
+                //console.log('here')
+                if (x > node.x && x < node.x + node.width && y > node.y && y < node.y + node.height) {
+                    //node.onMouseover({x: x, y: y, dx:dx, dy:dy, context:box});
+                    box.ctx.save();
+                    box.ctx.translate(node.x + node.width / 2, node.y + node.height / 2);
+                    node.drawSelectedRect(box.ctx);
+                    box.ctx.restore();
+                } else {
+                    if (node.isOnMousOver) {
+                        node.onMouseout({x: x, y: y, dx: dx, dy: dy, context: box});
+                    }
+                }
+            }
+        }
 
-  <body>
+        function drag(ev) {
+            ev.dataTransfer.setData("Text", ev.target.id);
+        }
+        function drop(ev) {
+            ev.preventDefault();
+            var id = ev.dataTransfer.getData("Text");
+            //var item = document.getElementById(data).cloneNode();
+            var xy = JTopo.util.getXY(box, ev);
+            var x = xy.x;
+            var y = xy.y;
+            node(x, y, id + '.png', id);
+            box.updateView();
+        }
 
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="brand" href="#">Project name</a>
-          <div class="nav-collapse collapse">
-            <p class="navbar-text pull-right">
-              Logged in as <a href="#" class="navbar-link">Username</a>
-            </p>
-            <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="about.html">About</a></li>
-              <li><a href="contact.html">Contact</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
-    </div>
+    </script>
+</head>
+<body>
+<div>
+    <img id="host" src="./img/net/host.png" draggable="true" ondragstart="drag(event)"/> &nbsp;&nbsp;
+    <img id="route" src="./img/net/route.png" draggable="true" ondragstart="drag(event)"/>&nbsp;&nbsp;
+    <img id="private_network" src="./img/net/private_network.png" draggable="true" ondragstart="drag(event)"/>&nbsp;&nbsp;
+    <img id="internet" src="./img/net/internet.png" draggable="true" ondragstart="drag(event)"/>&nbsp;&nbsp;
+    <img id="lb" src="./img/net/lb.png" draggable="true" ondragstart="drag(event)"/>&nbsp;&nbsp;
 
-    <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span3">
-          <div class="well sidebar-nav">
-            <ul class="nav nav-list" id='Menu_ul'>
-            </ul>
-          </div><!--/.well -->
-        </div><!--/span-->
-        <div class="span9">
-          <canvas id="canvas" style="" width="800" height="500"></canvas>
-        </div><!--/span-->
-      </div><!--/row-->
-
-      <hr>
-
-      <footer>
-        <p>&copy; Company 2013</p>
-      </footer>
-
-    </div><!--/.fluid-container-->
-
-  </body>
+</div>
+<div id="content">
+    <canvas width="1198" height="1158" id="canvas" ondrop="drop(event)"
+            ondragover="allowDrop(event)"></canvas>
+</div>
+</body>
 </html>

@@ -447,6 +447,8 @@
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
 		if(this.image != null){
+			//1fb5f8
+			//31,181,248
 			//this.ctx.drawImage(this.image , 0, 0);
 			// 注意，这里的 width 和 height 变成了 width * ratio 和 height * ratio
 			//this.ctx.drawImage(this.image , 0, 0, this.image.width * this.ratio, this.image.width * this.ratio);
