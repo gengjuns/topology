@@ -6,30 +6,30 @@
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/excanvas.js"></script>
 
-    <script type="text/javascript" src="../src/jtopo.js"></script>
-    <script type="text/javascript" src="../src/jtopo.element.js"></script>
-    <script type="text/javascript" src="../src/jtopo.abstractnode.js"></script>
-    <!--<script type="text/javascript" src="../src/jtopo.animation.js"></script>-->
-    <script type="text/javascript" src="../src/jtopo.link.js"></script>
-    <script type="text/javascript" src="../src/jtopo.node.js"></script>
-    <script type="text/javascript" src="../src/jtopo.util.js"></script>
-    <script type="text/javascript" src="../src/jtopo.container.js"></script>
-    <script type="text/javascript" src="../src/jtopo.databox.js"></script>
+    <script type="text/javascript" src="../src/topology.js"></script>
+    <script type="text/javascript" src="../src/topology.element.js"></script>
+    <script type="text/javascript" src="../src/topology.abstractnode.js"></script>
+    <!--<script type="text/javascript" src="../src/topology.animation.js"></script>-->
+    <script type="text/javascript" src="../src/topology.link.js"></script>
+    <script type="text/javascript" src="../src/topology.node.js"></script>
+    <script type="text/javascript" src="../src/topology.util.js"></script>
+    <script type="text/javascript" src="../src/topology.container.js"></script>
+    <script type="text/javascript" src="../src/topology.databox.js"></script>
 
-    <script type="text/javascript" src="../src/jtopo.layout.js"></script>
+    <script type="text/javascript" src="../src/topology.layout.js"></script>
     <script type="text/javascript" src="./js/hidpi-canvas.min.js"></script>
 
     <script type="text/javascript">
 
         var box = null;
         $(document).ready(function () {
-            box = new JTopo.DataBox('dataBox', $("#canvas")[0]);
+            box = new Topology.DataBox('dataBox', $("#canvas")[0]);
             //box.isShowRange = false;
             //var canvas = document.getElementById('canvas');
-            //var stage = new JTopo.Stage(canvas);
+            //var stage = new Topology.Stage(canvas);
             //显示工具栏
-            //showJTopoToobar(stage);
-            //var scene = new JTopo.Scene();
+            //showtopologyToobar(stage);
+            //var scene = new Topology.Scene();
             //scene.background = './img/net/bg.jpg';
 
             var x = 50;
@@ -85,7 +85,7 @@
 
 
         function node(x, y, img, name) {
-            var node = new JTopo.Node(name);
+            var node = new Topology.Node(name);
             node.setImage('./img/net/' + img, true);
             node.setLocation(x, y);
             node.fontColor = "0,0,0"
@@ -94,7 +94,7 @@
         }
 
         function linkNodeX(nodeA, nodeZ) {
-            var link = new JTopo.FabricLink(nodeA, nodeZ, 'x');
+            var link = new Topology.FabricLink(nodeA, nodeZ, 'x');
             link.lineWidth = 1;
             link.strokeColor = '97,97,97';
             box.add(link);
@@ -102,7 +102,7 @@
         }
 
         function linkNodeY(nodeA, nodeZ) {
-            var link = new JTopo.FabricLink(nodeA, nodeZ, 'y');
+            var link = new Topology.FabricLink(nodeA, nodeZ, 'y');
             link.lineWidth = 1;
             link.strokeColor = '97,97,97';
             box.add(link);
@@ -112,7 +112,7 @@
         function allowDrop(ev) {
             ev.preventDefault();
             var nodes = box.nodes;
-            var xy = JTopo.util.getXY(box, ev);
+            var xy = Topology.util.getXY(box, ev);
             var x = xy.x;
             var y = xy.y;
             var dx = (x - box.startDragMouseX);
@@ -146,7 +146,7 @@
             ev.preventDefault();
             var id = ev.dataTransfer.getData("Text");
             //var item = document.getElementById(data).cloneNode();
-            var xy = JTopo.util.getXY(box, ev);
+            var xy = Topology.util.getXY(box, ev);
             var x = xy.x;
             var y = xy.y;
             node(x, y, id + '.png', id);

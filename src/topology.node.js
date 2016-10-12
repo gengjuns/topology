@@ -1,16 +1,4 @@
-/*
- * JTopo (Javascript topology libraries) 0.2.0
- * https://github.com/wondery/jtopo
- * 
- * Copyright (c) 2013 wondery
- * Released under the LGPL license, Version 3.0
- * http://www.gnu.org/licenses/lgpl.html
- *
- * Author: wondery
- * Email: jtopology@163.com
- */
-
-(function(JTopo){
+(function(Topology){
 
 	function Node(name) {
 		this.name = name;
@@ -27,7 +15,7 @@
 		this.rotate = 0;
 	};
 
-	Node.prototype = new JTopo.AbstractNode();
+	Node.prototype = new Topology.AbstractNode();
 
 	Node.prototype.drawText = function(ctx){
 		var name = this.getName();
@@ -77,7 +65,7 @@
 	Node.prototype.draw = function (ctx) {
 		if(! this.isVisible()) return;
 		var node = this;
-		var ratio=JTopo.util.getPixelRatio(ctx);
+		var ratio=Topology.util.getPixelRatio(ctx);
 		ctx.save();
 		ctx.translate(this.x+this.width/2, this.y+this.height/2);
 		ctx.rotate(this.rotate);
@@ -114,7 +102,7 @@
 	Node.prototype.split = function(angle){
 		var node = this;
 		function genNode(x, y, r, beginDegree, endDegree){
-			var newNode = new JTopo.Node();
+			var newNode = new Topology.Node();
 			newNode.setImage(node.image);
 			newNode.setLocation(x, y);
 			newNode.draw = function(ctx){
@@ -145,7 +133,7 @@
 	};
 
 	function CircleNode(name){
-		var node = new JTopo.Node(name);
+		var node = new Topology.Node(name);
 		node.r = 30;	
 		node.beginDegree = 0;
 		node.endDegree = 2 * Math.PI;
@@ -167,7 +155,7 @@
 	}
 
 	function HeartNode(){
-		var node = new JTopo.Node();
+		var node = new Topology.Node();
 		node.setSize(120, 120);
 		node.draw = function(ctx){
 			if(! this.visible) return;
@@ -189,7 +177,7 @@
 	}
 
 	function TipNode(name){
-		var node = new JTopo.Node(name);
+		var node = new Topology.Node(name);
 		node.setSize(100, 100);
 		node.draw = function(ctx){
 			if(! this.visible) return;
@@ -215,7 +203,7 @@
 	}
 
 	function TextNode(name){
-		var node = new JTopo.Node(name);
+		var node = new Topology.Node(name);
 		node.setHeight(14);
 		node.style = {strokeStyle: 'rgba(255,255,255, 0.99)', fillStyle:'rgba(255,255,255, 0.5)' };
 		node.draw = function(ctx){
@@ -255,7 +243,7 @@
 	}
 
 	function GhomboidNode(){
-		var node = new JTopo.Node();
+		var node = new Topology.Node();
 		node.offset = 10;
 		node.draw = function(ctx){
 			ctx.save();
@@ -278,7 +266,7 @@
 	}
 
 	function UMLClassNode(name){
-		var node = new JTopo.Node();
+		var node = new Topology.Node();
 		node.style.fillStyle = '71, 167, 184';
 		node.className = name;
 		node.rowHeight = 18;
@@ -345,7 +333,7 @@
 
 
 	function EndPointNode(name){
-		var node = new JTopo.Node(name);
+		var node = new Topology.Node(name);
 		var bak = node.draw;
 		node.draw = function(ctx){
 			if(! this.visible) return;
@@ -354,7 +342,7 @@
 			var rx = node.width/3;
 			var ry = node.height/3;
 			function createPoint(x, y){
-				var point = new JTopo.Node();
+				var point = new Topology.Node();
 				point.setSize(rx, ry);
 				point.style.fillStyle = '0,255,0';
 				point.setDragable(false);
@@ -377,12 +365,12 @@
 		return node;
 	}
 
-	JTopo.Node = Node;
-	JTopo.CircleNode = CircleNode;
-	JTopo.GhomboidNode = GhomboidNode;
-	JTopo.TipNode = TipNode;
-	JTopo.TextNode = TextNode;
-	JTopo.HeartNode = HeartNode;
-	JTopo.UMLClassNode = UMLClassNode;
-	JTopo.EndPointNode = EndPointNode;
-})(JTopo);
+	Topology.Node = Node;
+	Topology.CircleNode = CircleNode;
+	Topology.GhomboidNode = GhomboidNode;
+	Topology.TipNode = TipNode;
+	Topology.TextNode = TextNode;
+	Topology.HeartNode = HeartNode;
+	Topology.UMLClassNode = UMLClassNode;
+	Topology.EndPointNode = EndPointNode;
+})(Topology);

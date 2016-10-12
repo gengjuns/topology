@@ -1,7 +1,7 @@
 
 //round
 function basic(){
-	var node = new JTopo.CircleNode();
+	var node = new Topology.CircleNode();
 	node.setLocation(400,30);
 	box.addElement(node);
 	var dx = 5, dy = 5;
@@ -20,7 +20,7 @@ function basic(){
 
 //gravity
 function basic1(){
-	var node = new JTopo.CircleNode();
+	var node = new Topology.CircleNode();
 	node.setLocation(400,30);
 	box.addElement(node);
 	var dx = 0, dy = 2;
@@ -38,7 +38,7 @@ function basic1(){
 
 //cycle
 function basic2(){
-	var node = new JTopo.CircleNode();
+	var node = new Topology.CircleNode();
 	node.setLocation(400,30);
 	box.addElement(node);
 	var centerX = node.x;
@@ -54,7 +54,7 @@ function basic2(){
 
 //cycle and stop
 function basic3(node){
-	var node = new JTopo.CircleNode();
+	var node = new Topology.CircleNode();
 	node.setLocation(400, 200);
 	box.addElement(node);
 	var centerX = node.x;
@@ -91,7 +91,7 @@ function basic4(){
 	}
 
 	for(var i=0; i<count; i++){
-		var node = new JTopo.CircleNode();
+		var node = new Topology.CircleNode();
 		initNode(node);
 		box.addElement(node);
 		nodes.push(node);
@@ -119,7 +119,7 @@ function basic4(){
 
 //friction
 function basic5(){
-	var node = new JTopo.CircleNode();
+	var node = new Topology.CircleNode();
 	node.setLocation(200, 180);
 	box.addElement(node);
 
@@ -137,7 +137,7 @@ function basic5(){
 
 //slow move
 function advance1(){
-	var node = new JTopo.CircleNode();
+	var node = new Topology.CircleNode();
 	node.setLocation(600,100);
 	box.addElement(node);
 
@@ -159,15 +159,15 @@ function advance1(){
 
 //spring
 function advance2(){
-	var node = new JTopo.CircleNode();
+	var node = new Topology.CircleNode();
 	node.setLocation(600,100);
 	box.addElement(node);
 
-	var node2 = new JTopo.CircleNode();
+	var node2 = new Topology.CircleNode();
 	node2.setLocation(600,100);
 	box.addElement(node2);
 
-	var link = new JTopo.Link(node, node2);
+	var link = new Topology.Link(node, node2);
 	box.addElement(link);
 
 	var spring = 0.2;
@@ -197,7 +197,7 @@ function advance3(){
 	var nodes = [];
 	
 	for(var i=0; i<count; i++){
-		var node = new JTopo.CircleNode();
+		var node = new Topology.CircleNode();
 		node.r = 20;
 		node.fillStyle = 'rgba(0,0,0,0.5)';
 		node.setLocation(300+90 * i, 100);
@@ -205,7 +205,7 @@ function advance3(){
 		node.vy = 1;
 		box.addElement(node);
 		if(i>0){
-			var link = new JTopo.Link(node, nodes[i-1]);
+			var link = new Topology.Link(node, nodes[i-1]);
 			box.addElement(link);
 		}
 		nodes.push(node);
@@ -241,23 +241,23 @@ function advance3(){
 
 //spring muti-target
 function advance4(){
-	var node = new JTopo.Node();
+	var node = new Topology.Node();
 	node.setLocation(400,100);
 	box.addElement(node);
-	var node2 = new JTopo.Node();
+	var node2 = new Topology.Node();
 	node2.setLocation(200, 200);
 	box.addElement(node2);
-	var node3 = new JTopo.Node();
+	var node3 = new Topology.Node();
 	node3.setLocation(600,300);
 	box.addElement(node3);
 
-	var cNode = new JTopo.CircleNode();
+	var cNode = new Topology.CircleNode();
 	cNode.setLocation(600,100);
 	box.addElement(cNode);
 
-	box.addElement(new JTopo.Link(node, cNode));
-	box.addElement(new JTopo.Link(node2, cNode));
-	box.addElement(new JTopo.Link(node3, cNode));
+	box.addElement(new Topology.Link(node, cNode));
+	box.addElement(new Topology.Link(node2, cNode));
+	box.addElement(new Topology.Link(node3, cNode));
 	
 	box.updateView();
 	var spring = 0.2;
@@ -289,23 +289,23 @@ function advance4(){
 
 //Sun-Moon-Star
 function sunstart(){
-	var node = new JTopo.CircleNode('');
+	var node = new Topology.CircleNode('');
 	node.setLocation(200 , 360);
 	node.color = "rgb(234, 226, 74)";
 	
-	var sunNode = new JTopo.HeartNode('');
+	var sunNode = new Topology.HeartNode('');
 	sunNode.style.fillStyle = 'rgba(255,0,0,0.5)';
 	sunNode.setLocation(300 , 200);
 	sunNode.color = "rgb(0, 0, 255)";
 	
-	var moonNode = new JTopo.CircleNode('');
+	var moonNode = new Topology.CircleNode('');
 	moonNode.setLocation(360 , 360);
 	moonNode.color = "rgb(234, 226, 74)";					
 
-	var link = new JTopo.Link(node , moonNode);
+	var link = new Topology.Link(node , moonNode);
 	box.addElement(link);
 	
-	var link2 = new JTopo.Link(sunNode , moonNode);
+	var link2 = new Topology.Link(sunNode , moonNode);
 	box.addElement(link2);		
 	
 	box.addElement(node);
@@ -335,7 +335,7 @@ function sunstart(){
 function d3(){
 	var vpx = box.canvas.width/2;
 	var vpy = box.canvas.height/2;
-	var node = new JTopo.CircleNode();
+	var node = new Topology.CircleNode();
 	node.setLocation(vpx, vpy);
 	box.addElement(node);
 
@@ -359,7 +359,7 @@ function d3(){
 
 //friction
 function d3_2(){
-	var node = new JTopo.CircleNode();
+	var node = new Topology.CircleNode();
 	node.vpx = box.canvas.width/2;
 	node.vpy = box.canvas.height/2;
 	node.vr = node.r;
@@ -414,7 +414,7 @@ function d3_2(){
 
 //bound check
 function d3_3(){
-	var node = new JTopo.CircleNode();
+	var node = new Topology.CircleNode();
 	node.vpx = box.canvas.width/2;
 	node.vpy = box.canvas.height/2;
 	node.vr = node.r;
@@ -486,7 +486,7 @@ function d3_3(){
 function d3_4(){
 	var nodes = [];
 	for(var i=0; i<100; i++){
-		var node = new JTopo.CircleNode();
+		var node = new Topology.CircleNode();
 		node.vpx = box.canvas.width/2;
 		node.vpy = box.canvas.height/2;
 		node.vr = node.r = 2;
@@ -560,7 +560,7 @@ function d3_5(){
 
 	var nodes = [];
 	for(var i=0; i<100; i++){
-		var node = new JTopo.CircleNode();
+		var node = new Topology.CircleNode();
 		node.vpx = Math.random() * 2000 - 1000;
 		node.vpy = floor;
 		node.z = Math.random() * 10000;

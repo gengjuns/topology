@@ -1,17 +1,4 @@
-/*
- * JTopo (Javascript topology libraries) 0.2.0
- * https://github.com/wondery/jtopo
- * 
- * Copyright (c) 2013 wondery
- * Released under the LGPL license, Version 3.0
- * http://www.gnu.org/licenses/lgpl.html
- *
- * Author: wondery
- * Email: jtopology@163.com
- * Date: 2013-07-22
- */
-
-(function(JTopo){
+(function(Topology){
 
 	function Link(nodeA, nodeB) {
 		this.nodeA = nodeA;
@@ -19,7 +6,7 @@
 		this.style = {strokeStyle: '97, 97, 97', alpha: 1, lineWidth: 1};
 	};
 
-	Link.prototype = new JTopo.Element();
+	Link.prototype = new Topology.Element();
 
 	Link.prototype.draw = function (ctx) {
 		ctx.save();
@@ -38,7 +25,7 @@
 	};
 
 	function FabricLink(nodeA, nodeB, fold) {
-		var link = new JTopo.Link(nodeA, nodeB);
+		var link = new Topology.Link(nodeA, nodeB);
 		link.fold = fold;
 		link.draw = function (ctx) {
 			var x1 = this.nodeA.x;
@@ -105,7 +92,7 @@
 	};
 
 	function FoldLink(nodeA, nodeB) {
-		var link = new JTopo.Link(nodeA, nodeB);
+		var link = new Topology.Link(nodeA, nodeB);
 		link.fold = 'x';
 		link.draw = function (ctx) {
 			var x1 = this.nodeA.x;
@@ -149,7 +136,7 @@
 
 
 	function CurveLink(nodeA, nodeB) {
-		var link = new JTopo.Link(nodeA, nodeB);
+		var link = new Topology.Link(nodeA, nodeB);
 		link.curve = 0.5; 
 		link.draw = function (ctx) {
 			var x1 = this.nodeA.x;
@@ -180,7 +167,7 @@
 	};
 
 	function ArrowsLink(nodeA, nodeB){
-		var link = new JTopo.Link(nodeA, nodeB);
+		var link = new Topology.Link(nodeA, nodeB);
 		link.angle = 0.4;
 		link.offset = 30;
 		//link.style.fillStyle = '116, 166, 250';
@@ -224,7 +211,7 @@
 	}
 
 	function ArrowsFoldLink(nodeA, nodeB) {
-		var link = new JTopo.Link(nodeA, nodeB);
+		var link = new Topology.Link(nodeA, nodeB);
 		link.fold = 'x';
 		link.angle = 0.4;
 		link.offset = 30;
@@ -316,10 +303,10 @@
 	};
 
 
-	JTopo.Link = Link;
-	JTopo.FabricLink = FabricLink;
-	JTopo.FoldLink = FoldLink;
-	JTopo.CurveLink = CurveLink;
-	JTopo.ArrowsLink = ArrowsLink;
-	JTopo.ArrowsFoldLink = ArrowsFoldLink;
-})(JTopo);
+	Topology.Link = Link;
+	Topology.FabricLink = FabricLink;
+	Topology.FoldLink = FoldLink;
+	Topology.CurveLink = CurveLink;
+	Topology.ArrowsLink = ArrowsLink;
+	Topology.ArrowsFoldLink = ArrowsFoldLink;
+})(Topology);

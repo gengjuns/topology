@@ -1,16 +1,5 @@
-/*
- * JTopo (Javascript topology libraries) 0.2.0
- * https://github.com/wondery/jtopo
- * 
- * Copyright (c) 2013 wondery
- * Released under the LGPL license, Version 3.0
- * http://www.gnu.org/licenses/lgpl.html
- *
- * Author: wondery
- * Email: jtopology@163.com
- */
 
-(function(JTopo){
+(function(Topology){
 
 	function DataBox(name, canvas) {
 		this.name = name;
@@ -18,7 +7,7 @@
 		this.ctx = this.canvas.getContext("2d");
 		this.width = this.canvas.width;
 		this.height = this.canvas.height;
-		this.messageBus = new JTopo.util.MessageBus();
+		this.messageBus = new Topology.util.MessageBus();
 		this.image = new Image();
 		this.image.src = './img/bg_grid.png';
 		this.init();
@@ -42,7 +31,7 @@
 		this.elementMap = {};
 		this.selectedElements = [];
 
-		this.ratio=JTopo.util.getPixelRatio(this.ctx);
+		this.ratio=Topology.util.getPixelRatio(this.ctx);
 
 		var box = this;
 		this.canvas.onmousedown = function(event){
@@ -104,7 +93,7 @@
 			var typeNode = this.nodes[i];
 			if(typeNode === node) continue;
 			if(cond(typeNode) == true){
-				var dist = JTopo.util.getDistance(node, typeNode);
+				var dist = Topology.util.getDistance(node, typeNode);
 				if(dist < min.distance){
 					min.node = typeNode;
 					min.distance = dist;
@@ -123,7 +112,7 @@
 
 	DataBox.prototype.mousedown = function(event){
 		var box = this;
-		var xy = JTopo.util.getXY(box, event);
+		var xy = Topology.util.getXY(box, event);
 		var x = xy.x;
 		var y = xy.y;
 		
@@ -159,7 +148,7 @@
 
 	DataBox.prototype.mousemove = function(event){
 		var box = this;
-		var xy = JTopo.util.getXY(box, event);
+		var xy = Topology.util.getXY(box, event);
 		var x = xy.x;
 		var y = xy.y;
 		var dx = (x - box.startDragMouseX);
@@ -217,7 +206,7 @@
 
 	DataBox.prototype.mouseup = function(event){
 		var box = this;
-		var xy = JTopo.util.getXY(this, event);
+		var xy = Topology.util.getXY(this, event);
 		var x = xy.x;
 		var y = xy.y;
 		var dx = (x - box.startDragMouseX);
@@ -320,11 +309,11 @@
 		if(! e.z) e.z = this.elements.length;
 		this.elements.push(e);
 
-		if(e instanceof JTopo.Container) {
+		if(e instanceof Topology.Container) {
 			this.containers.push(e);
-		}else if (e instanceof JTopo.Link) {
+		}else if (e instanceof Topology.Link) {
 			this.links.push(e);
-		}else if (e instanceof JTopo.Node) {
+		}else if (e instanceof Topology.Node) {
 			this.nodes.push(e);
 		}
 		this.elementMap[e.id] = e;
@@ -419,10 +408,10 @@
 		var type = layout.type;
 		var points = null;
 		if(type == 'star'){
-			points = JTopo.Layout.getStarPositions(node.x, node.y, childs.length, node.layout.radius, 
+			points = Topology.Layout.getStarPositions(node.x, node.y, childs.length, node.layout.radius, 
 												   node.layout.beginDegree, node.layout.endDegree);
 		}else if(type == 'tree'){
-			points = JTopo.Layout.getTreePositions(node.x, node.y, childs.length, layout.width, 
+			points = Topology.Layout.getTreePositions(node.x, node.y, childs.length, layout.width, 
 												   layout.height, layout.direction);
 		}
 		for(var i=0; i<childs.length; i++){
@@ -495,5 +484,5 @@
 		}
 	};
 
-	JTopo.DataBox = DataBox;
-})(JTopo);
+	Topology.DataBox = DataBox;
+})(Topology);

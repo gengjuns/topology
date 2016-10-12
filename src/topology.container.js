@@ -1,16 +1,5 @@
-/*
- * JTopo (Javascript topology libraries) 0.2.0
- * https://github.com/wondery/jtopo
- * 
- * Copyright (c) 2013 wondery
- * Released under the LGPL license, Version 3.0
- * http://www.gnu.org/licenses/lgpl.html
- *
- * Author: wondery
- * Email: jtopology@163.com
- */
 
-(function(JTopo){
+(function(Topology){
 
 	function Container(name) {
 		this.name = name;
@@ -24,7 +13,7 @@
 		this.dragable = true;
 	};
 
-	Container.prototype = new JTopo.Element();
+	Container.prototype = new Topology.Element();
 
 	Container.prototype.add = function (e) {
 		this.items.push(e);
@@ -109,7 +98,7 @@
 	};
 
 	function GhomboidContainer(){
-		var container = new JTopo.Container();
+		var container = new Topology.Container();
 		container.offset = 50;
 		container.draw = function(ctx){
 			this.updateBound();
@@ -135,7 +124,7 @@
 
 
 	function GridContainer(){
-		var container = new JTopo.Container();
+		var container = new Topology.Container();
 		container.rows = 3;
 		container.cols = 2;
 		container.cellWidth = 60;
@@ -212,7 +201,7 @@
 	}
 
 	function OneItemContainer(){
-		var container = new JTopo.GridContainer();
+		var container = new Topology.GridContainer();
 		container.rows = 1;
 		container.cols = 1;
 		container.cellWidth = 50;
@@ -226,9 +215,9 @@
 		return container;
 	};
 
-	JTopo.Container = Container;
-	JTopo.GridContainer = GridContainer;
-	JTopo.OneItemContainer = OneItemContainer;
-	JTopo.GhomboidContainer = GhomboidContainer;
+	Topology.Container = Container;
+	Topology.GridContainer = GridContainer;
+	Topology.OneItemContainer = OneItemContainer;
+	Topology.GhomboidContainer = GhomboidContainer;
 	
-})(JTopo);
+})(Topology);

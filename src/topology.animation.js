@@ -1,16 +1,4 @@
-/*
- * JTopo (Javascript topology libraries) 0.2.0
- * https://github.com/wondery/jtopo
- * 
- * Copyright (c) 2013 wondery
- * Released under the LGPL license, Version 3.0
- * http://www.gnu.org/licenses/lgpl.html
- *
- * Author: wondery
- * Email: jtopology@163.com
- */
-
-(function(JTopo){
+(function(Topology){
 	var isStopAll = false;
 
 	//gravity
@@ -96,7 +84,7 @@
 		var effect = {};
 
 		function genNode(x, y, r, beginDegree, endDegree){
-			var newNode = new JTopo.Node();
+			var newNode = new Topology.Node();
 			newNode.setImage(node.image);
 			newNode.setSize(node.width, node.height);
 			newNode.setLocation(x, y);
@@ -131,13 +119,13 @@
 			box.add(node2);
 			box.updateView();
 
-			JTopo.Animation.gravity(node1, {context:box, dx:0.3}).run().onStop(function(n){
+			Topology.Animation.gravity(node1, {context:box, dx:0.3}).run().onStop(function(n){
 				box.remove(node1);
 				box.remove(node2);
 				box.updateView();
 				effect.stop();
 			});
-			JTopo.Animation.gravity(node2, {context:box, dx:-0.2}).run();
+			Topology.Animation.gravity(node2, {context:box, dx:-0.2}).run();
 		}
 
 		function run(){	
@@ -225,7 +213,7 @@
 
 		var midX = p1.x + (p2.x - p1.x)/2;
 		var midY = p1.y + (p2.y - p1.y)/2;
-		var r = JTopo.util.getDistance(p1, p2)/2;
+		var r = Topology.util.getDistance(p1, p2)/2;
 
 		var angle = Math.atan2(midY, midX);
 		var speed = option.speed || 0.2;
@@ -325,7 +313,7 @@
 		return effect;
 	}
 
-	JTopo.Animation = {
+	Topology.Animation = {
 		gravity : gravity,
 		dividedTwoPiece : dividedTwoPiece,
 		repeatThrow: repeatThrow,
@@ -336,4 +324,4 @@
 		stopAll: stopAll,
 		startAll: startAll
 	};
-})(JTopo);
+})(Topology);
