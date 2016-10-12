@@ -178,13 +178,26 @@
 	   doIt(n);
 	}
 
+	function getPixelRatio(context) {
+		var backingStore = context.backingStorePixelRatio ||
+			context.webkitBackingStorePixelRatio ||
+			context.mozBackingStorePixelRatio ||
+			context.msBackingStorePixelRatio ||
+			context.oBackingStorePixelRatio ||
+			context.backingStorePixelRatio || 1;
+
+		return (window.devicePixelRatio || 1) / backingStore;
+		//return 1;
+	};
+
 	JTopo.util = {
 		rotatePoint : rotatePoint,
 		rotatePoints : rotatePoints,
 		getDistance : getDistance,
 		getXY: getXY,
 		mouseCoords: mouseCoords,
-		MessageBus: MessageBus
+		MessageBus: MessageBus,
+		getPixelRatio: getPixelRatio
 	};
 	window.$for = $for;
 	window.$foreach = $foreach;

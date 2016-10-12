@@ -20,7 +20,7 @@
 		this.height = this.canvas.height;
 		this.messageBus = new JTopo.util.MessageBus();
 		this.image = new Image();
-		this.image.src = './img/bg.jpg';
+		this.image.src = './img/bg_grid.png';
 		this.init();
 	};
 
@@ -41,6 +41,8 @@
 		this.nodes = [];
 		this.elementMap = {};
 		this.selectedElements = [];
+
+		this.ratio=JTopo.util.getPixelRatio(this.ctx);
 
 		var box = this;
 		this.canvas.onmousedown = function(event){
@@ -79,7 +81,7 @@
 			for (var i = this.containers.length-1; i >=0 ; i--) {
 				var group = this.containers[i];
 				if (x > group.x && x < group.x + group.width && y > group.y && y < group.y + group.height) {
-					e = group;					
+					e = group;
 					break;
 				}
 			}
@@ -163,9 +165,7 @@
 		var dx = (x - box.startDragMouseX);
 		var dy = (y - box.startDragMouseY);
 		box.publish('mousemove', {target:box.currElement, x: x, y:y,dx: dx, dy:dy, context:box});
-
 		//if(box.currElement && !box.currElement.isDragable()) return;
-
 		box.updateView();
 		for (var i = this.nodes.length-1; i >= 0 ; i--) {
 			var node = this.nodes[i];
@@ -447,8 +447,30 @@
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
 		if(this.image != null){
-			this.ctx.drawImage(this.image , 0, 0);
+			//this.ctx.drawImage(this.image , 0, 0);
+			// 注意，这里的 width 和 height 变成了 width * ratio 和 height * ratio
+			//this.ctx.drawImage(this.image , 0, 0, this.image.width * this.ratio, this.image.width * this.ratio);
+
 		}
+		var width=this.ctx.canvas.width;
+		var height=this.ctx.canvas.height;
+		this.ctx.lineWidth = 1;
+		this.ctx.strokeStyle = 'rgba(97, 97, 97,0.1)';
+		//先画横线
+		for( var i = 1; i * 10 < height; i++ ){
+			this.ctx.beginPath();
+			this.ctx.moveTo(0,i * 10);
+			this.ctx.lineTo(width,i* 10);
+			this.ctx.stroke();
+		}
+		//再画纵线
+		for( var j = 1; j * 10 < width; j++ ){
+			this.ctx.beginPath();
+			this.ctx.moveTo(j * 10, 0);
+			this.ctx.lineTo(j * 10, height);
+			this.ctx.stroke();
+		}
+
 
 		for (var i = 0; i < this.links.length; i++) {
 			var link = this.links[i];

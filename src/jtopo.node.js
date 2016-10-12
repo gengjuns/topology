@@ -18,7 +18,7 @@
 		this.height = 35;
 		this.x = 0;
 		this.y = 0;
-		this.style = {fillStyle: '71, 167, 184', fontSize: '10pt', font:"Consolas"};
+		this.style = {fillStyle: '255, 85, 85', fontSize: '10px', font:"Microsoft YaHei"};
 		this.type = null;
 		this.selected = false;
 
@@ -34,8 +34,11 @@
 		if(! name || name == '') return;
 		var textWidth = ctx.measureText(name).width;
 		ctx.font = this.style.fontSize + ' ' + this.style.font;
-		ctx.strokeStyle = 'rgba(0, 0, 0, '+ this.alpha+')';
-		ctx.strokeText(name, -this.width/2+ (this.width - textWidth)/2, this.height/2 + 12); 
+		//ctx.strokeStyle = 'rgba(255, 3, 0, '+ this.alpha+')';
+		//ctx.strokeText(name, -this.width/2+ (this.width - textWidth)/2, this.height/2 + 12);
+
+		ctx.fillStyle = 'rgba(15, 15, 15, '+ this.alpha+')';
+		ctx.fillText(name, -this.width/2+ (this.width - textWidth)/2, this.height/2 + 12);
 	};
 
 	Node.prototype.drawTip = function(ctx){
@@ -74,6 +77,7 @@
 	Node.prototype.draw = function (ctx) {
 		if(! this.isVisible()) return;
 		var node = this;
+		var ratio=JTopo.util.getPixelRatio(ctx);
 		ctx.save();
 		ctx.translate(this.x+this.width/2, this.y+this.height/2);
 		ctx.rotate(this.rotate);
@@ -87,7 +91,12 @@
 		if(image != null){	
 			//ctx.rect(-this.width/2, -this.height/2, this.width, this.height);
 			//ctx.clip();
-			ctx.drawImage(image, -this.width/2, -this.height/2);
+			//console.log(this.ratio);
+			//console.log(image.width);
+			// 注意，这里的 width 和 height 变成了 width * ratio 和 height * ratio
+			ctx.drawImage(image , -this.width*ratio/2, -this.height*ratio/2, this.width * ratio, this.height * ratio);
+
+			//ctx.drawImage(image, -this.width/2, -this.height/2);
 		}else{	
 			ctx.beginPath();
 			ctx.fillStyle = 'rgba(' + this.style.fillStyle + ',' + this.alpha + ')';

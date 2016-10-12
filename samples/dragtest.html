@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <style type="text/css">
+        #div1
+        {float:left; width:500px; height:500px; margin:10px;padding:10px;border:1px solid #aaaaaa;}
+    </style>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript">
+        var ctx = null;
+        $(document).ready(function() {
+            var canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
+            ctx.shadowBlur = 5;
+            ctx.shadowColor = 'rgba(0,0,0,0)';
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 6;
+            var image = new Image();
+            image.src = "./img/bg.jpg";
+            image.onload=function(){
+                ctx.drawImage(image,0,0);
+            }
+
+        });
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("Text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("Text");
+            //var item = document.getElementById(data).cloneNode();
+            var img=new Image();
+            img.src="./img/OS_Windows_8.png";
+            ev.target.appendChild(img);
+        }
+
+        function drop1(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("Text");
+            //var item = document.getElementById(data).cloneNode();
+            var img=new Image();
+            img.src="./img/OS_Windows_8.png";
+            ctx.drawImage(img,0,0);
+        }
+
+    </script>
+</head>
+<body>
+<div id="content" style="width: 400px;">
+    <canvas width="400" height="400" id="canvas" ondrop="drop1(event)"
+            ondragover="allowDrop(event)"></canvas>
+</div>
+
+<div id="div1" ondrop="drop(event)"
+     ondragover="allowDrop(event)"></div>
+<img id="drag1" src="./img/OS_Apple.png" draggable="true"
+     ondragstart="drag(event)"/>
+
+
+</body>
+</html>
