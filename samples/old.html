@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Topology</title>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/excanvas.js"></script>
+
+    <script type="text/javascript" src="../src/topology.js"></script>
+    <script type="text/javascript" src="../src/topology.element.js"></script>
+    <script type="text/javascript" src="../src/topology.abstractnode.js"></script>
+    <!--<script type="text/javascript" src="../src/topology.animation.js"></script>-->
+    <script type="text/javascript" src="../src/topology.link.js"></script>
+    <script type="text/javascript" src="../src/topology.node.js"></script>
+    <script type="text/javascript" src="../src/topology.util.js"></script>
+    <script type="text/javascript" src="../src/topology.container.js"></script>
+    <script type="text/javascript" src="../src/topology.databox.js"></script>
+
+    <script type="text/javascript" src="../src/topology.layout.js"></script>
+    <script type="text/javascript" src="./js/hidpi-canvas.min.js"></script>
+
+    <script type="text/javascript">
+
+        var box = null;
+        $(document).ready(function () {
+            box = new Topology.DataBox('dataBox', $("#canvas")[0]);
+            //box.isShowRange = false;
+            //var canvas = document.getElementById('canvas');
+            //var stage = new Topology.Stage(canvas);
+            //显示工具栏
+            //showtopologyToobar(stage);
+            //var scene = new Topology.Scene();
+            //scene.background = './img/net/bg.jpg';
+
+            var x = 50;
+            var x_inc_100 = 100;
+
+            var y = 250;
+            var y_inc_100 = 100;
+            node(0, 0, 'host.png', 'html');
+            var b1 = node(x, y, 'basic.png', '基础网络');
+            var i1 = node(x = x + x_inc_100, y, 'internet.png', '公网IP');
+            var lb1 = node(x = x + x_inc_100, y, 'lb.png', "负载均衡器");
+            var r1 = node(x = x + x_inc_100, y, 'route.png', "路由器");
+            linkNodeX(b1, i1);
+            linkNodeX(i1, lb1);
+            linkNodeX(lb1, r1);
+
+            x = x + x_inc_100;
+
+            var p0 = node(x, y - 2 * y_inc_100, 'private_network.png', "内网");
+            linkNodeX(r1, p0);
+
+            var p1 = node(x, y, 'private_network.png', "内网");
+            linkNodeX(r1, p1);
+
+            var p2 = node(x, y + 2 * y_inc_100, 'private_network.png', "内网");
+            linkNodeX(r1, p2);
+
+            var h01 = node(x + x_inc_100, y - y_inc_100, 'host.png', "web服务");
+            var h02 = node(x + 2 * x_inc_100, y - y_inc_100, 'host.png', "web服务");
+            var h03 = node(x + 3 * x_inc_100, y - y_inc_100, 'host.png', "web服务");
+            linkNodeY(p0, h01);
+            linkNodeY(p0, h02);
+            linkNodeY(p0, h03);
+
+
+            var h11 = node(x + x_inc_100, y + y_inc_100, 'host.png', "web服务");
+            var h12 = node(x + 2 * x_inc_100, y + y_inc_100, 'host.png', "web服务");
+            var h13 = node(x + 3 * x_inc_100, y + y_inc_100, 'host.png', "web服务");
+            linkNodeY(p1, h11);
+            linkNodeY(p1, h12);
+            linkNodeY(p1, h13);
+
+            var h21 = node(x + x_inc_100, y + 3 * y_inc_100, 'host.png', "web服务");
+            var h22 = node(x + 2 * x_inc_100, y + 3 * y_inc_100, 'host.png', "web服务");
+            var h23 = node(x + 3 * x_inc_100, y + 3 * y_inc_100, 'host.png', "web服务");
+            linkNodeY(p2, h21);
+            linkNodeY(p2, h22);
+            linkNodeY(p2, h23);
+
+            box.updateView();
+
+        });
+
+
+        function node(x, y, img, name) {
+            var node = new Topology.Node(name);
+            node.setImage('./img/net/' + img, true);
+            node.setLocation(x, y);
+            node.fontColor = "0,0,0"
+            box.add(node);
+            return node;
+        }
+
+        function linkNodeX(nodeA, nodeZ) {
+            var link = new Topology.FabricLink(nodeA, nodeZ, 'x');
+            link.lineWidth = 1;
+            link.strokeColor = '97,97,97';
+            box.add(link);
+            return link;
+        }
+
+        function linkNodeY(nodeA, nodeZ) {
+            var link = new Topology.FabricLink(nodeA, nodeZ, 'y');
+            link.lineWidth = 1;
+            link.strokeColor = '97,97,97';
+            box.add(link);
+            return link;
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+            var nodes = box.nodes;
+            var xy = Topology.util.getXY(box, ev);
+            var x = xy.x;
+            var y = xy.y;
+            var dx = (x - box.startDragMouseX);
+            var dy = (y - box.startDragMouseY);
+            //console.log('nodes length: ' + nodes.length)
+            for (var i = nodes.length - 1; i >= 0; i--) {
+                var node = nodes[i];
+                //console.log('check: ' + (node.x + node.width))
+                //console.log('box widht: ' + (box.canvas.width))
+
+                if (node.x + node.width < 0 || node.x > box.canvas.width) continue;
+                //console.log('here')
+                if (x > node.x && x < node.x + node.width && y > node.y && y < node.y + node.height) {
+                    //node.onMouseover({x: x, y: y, dx:dx, dy:dy, context:box});
+                    box.ctx.save();
+                    box.ctx.translate(node.x + node.width / 2, node.y + node.height / 2);
+                    node.drawSelectedRect(box.ctx);
+                    box.ctx.restore();
+                } else {
+                    if (node.isOnMousOver) {
+                        node.onMouseout({x: x, y: y, dx: dx, dy: dy, context: box});
+                    }
+                }
+            }
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("Text", ev.target.id);
+        }
+        function drop(ev) {
+            ev.preventDefault();
+            var id = ev.dataTransfer.getData("Text");
+            //var item = document.getElementById(data).cloneNode();
+            var xy = Topology.util.getXY(box, ev);
+            var x = xy.x;
+            var y = xy.y;
+            node(x, y, id + '.png', id);
+            box.updateView();
+        }
+
+    </script>
+</head>
+<body>
+<div>
+    <img id="host" src="./img/net/host.png" draggable="true" ondragstart="drag(event)"/> &nbsp;&nbsp;
+    <img id="route" src="./img/net/route.png" draggable="true" ondragstart="drag(event)"/>&nbsp;&nbsp;
+    <img id="private_network" src="./img/net/private_network.png" draggable="true" ondragstart="drag(event)"/>&nbsp;&nbsp;
+    <img id="internet" src="./img/net/internet.png" draggable="true" ondragstart="drag(event)"/>&nbsp;&nbsp;
+    <img id="lb" src="./img/net/lb.png" draggable="true" ondragstart="drag(event)"/>&nbsp;&nbsp;
+
+</div>
+<div id="content">
+    <canvas width="1198" height="1158" id="canvas" ondrop="drop(event)"
+            ondragover="allowDrop(event)"></canvas>
+</div>
+</body>
+</html>

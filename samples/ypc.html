@@ -19,26 +19,6 @@
     <script type="text/javascript" src="../src/topology.layout.js"></script>
     <script type="text/javascript" src="./js/hidpi-canvas.min.js"></script>
 
-
-    <style>
-        body{
-            font-family: Arial,"Hiragino Sans GB","Microsoft YaHei","微软雅黑",STHeiti,"WenQuanYi Micro Hei",SimSun,sans-serif;
-            font-size: 12px;
-        }
-        img{
-            cursor: move;
-        }
-        .left{
-            width: 50px;
-            float: left;
-            text-align: center;
-        }
-        .right{
-            width: 1024px;
-            float: left;
-        }
-    </style>
-
     <script type="text/javascript">
 
         var box = null;
@@ -66,8 +46,8 @@
             var privateNetNode2 =  new Topology.InheritNode('内网', Topology.Node.NodeType.PrivateNet);
             routeNode.addChildNode(privateNetNode2,box);
 
-//            var privateNetNode3 =  new Topology.InheritNode('内网', Topology.Node.NodeType.PrivateNet);
-//            routeNode.addChildNode(privateNetNode3,box);
+            var privateNetNode3 =  new Topology.InheritNode('内网', Topology.Node.NodeType.PrivateNet);
+            routeNode.addChildNode(privateNetNode3,box);
 
             privateNetNode1.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
             privateNetNode1.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
@@ -77,9 +57,9 @@
             privateNetNode2.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
             privateNetNode2.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
 
-//            privateNetNode3.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
-//            privateNetNode3.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
-//            privateNetNode3.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
+            privateNetNode3.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
+            privateNetNode3.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
+            privateNetNode3.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
 
             box.updateView();
 
@@ -95,6 +75,10 @@
                     break;
                 }
             }
+
+
+
+
         }
 
         function drag(ev) {
@@ -172,24 +156,19 @@
         }
 
     </script>
-
 </head>
 <body>
-<div class="container">
-    <div class="header"></div>
-    <div class="left">
-        <img id="host" src="./img/net/host.png" draggable="true" ondragstart="drag(event)" style="cursor: move"/> <br>主机<br><br>
+<div>
+    <img id="host" src="./img/net/host.png" draggable="true" ondragstart="drag(event)"/> &nbsp;&nbsp;
+    <img id="route" src="./img/net/route.png" draggable="true" ondragstart="drag(event)"/>&nbsp;&nbsp;
+    <img id="private_network" src="./img/net/private_network.png" draggable="true" ondragstart="drag(event)"/>&nbsp;&nbsp;
+    <img id="internet" src="./img/net/internet.png" draggable="true" ondragstart="drag(event)"/>&nbsp;&nbsp;
+    <img id="lb" src="./img/net/lb.png" draggable="true" ondragstart="drag(event)"/>&nbsp;&nbsp;
 
-        <img id="route" src="./img/net/route.png" draggable="true" ondragstart="drag(event)"/><br>路由器<br><br>
-        <img id="private_network" src="./img/net/private_network.png" draggable="true" ondragstart="drag(event)"/><br>私网<br><br>
-        <img id="internet" src="./img/net/internet.png" draggable="true" ondragstart="drag(event)"/><br>公网IP<br><br>
-        <img id="lb" src="./img/net/lb.png" draggable="true" ondragstart="drag(event)"/><br>负载均衡<br><br>
-    </div>
-    <div class="right">
-        <canvas width="1198" height="1158" id="canvas" ondrop="drop(event)"
-                ondragover="dragover(event)"></canvas>
-    </div>
 </div>
-
+<div id="content">
+    <canvas width="1198" height="1158" id="canvas" ondrop="drop(event)"
+            ondragover="dragover(event)"></canvas>
+</div>
 </body>
 </html>

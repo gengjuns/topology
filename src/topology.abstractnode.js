@@ -52,22 +52,49 @@
 		}
 	};
 
-	var ImageCache = {};
 	AbstractNode.prototype.getTypeImage = function(type){
-		var typeImages = {
-			'zone' : './img/zone.png',
-			'host' : './img/host.png',
-			'vm' : './img/vm.png'
-		};
-		if(ImageCache[type]){
-			return ImageCache[type];
+		var host = Topology.Node.NodeType.Host;
+		var basic = Topology.Node.NodeType.BasicNet;
+		var firewell = Topology.Node.NodeType.Firewall;
+		var ip = Topology.Node.NodeType.Ip;
+		var lb = Topology.Node.NodeType.Loadbalance;
+		var route = Topology.Node.NodeType.Route;
+		var privateNet = Topology.Node.NodeType.PrivateNet;
+
+		var src = null;
+		switch(type)
+		{
+			case Topology.Node.NodeType.Host:
+				src = './img/net/host.png';
+				break;
+			case Topology.Node.NodeType.BasicNet:
+				src = './img/net/basic.png';
+				break;
+			case Topology.Node.NodeType.Firewall:
+				src = './img/net/firewell.png';
+				break;
+			case Topology.Node.NodeType.Ip:
+				src = './img/net/internet.png';
+				break;
+			case Topology.Node.NodeType.Loadbalance:
+				src = './img/net/lb.png';
+				break;
+			case Topology.Node.NodeType.Route:
+				src = './img/net/route.png';
+				break;
+			case Topology.Node.NodeType.PrivateNet:
+				src = './img/net/private_network.png';
+				break;
+			default:
+				src = null;
 		}
-		var src = typeImages[type];
+
+
 		if(src == null) return null;
 
-		var image = new Image();
-		image.src = src;
-		return ImageCache[type] = image;
+		var img = new Image();
+		img.src = src;
+		return img;
 	};
 
 	AbstractNode.prototype.getType = function(){
