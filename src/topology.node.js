@@ -48,6 +48,7 @@
         this.rotate = 0;
         this.childNodes = [];
         this.parentNode = null;
+        this.isDragged = false;
         this.childArrangeType = 'x';
         if (this.type == Topology.Node.NodeType.PrivateNet) {
             this.childArrangeType = 'y';
@@ -186,7 +187,7 @@
     function InheritNode(name, type) {
         var node = new Node(name, type);
 
-        node.drawSelectedRect = function (ctx, nodeType) {
+        node.drawDragSelectedRect = function (ctx, nodeType) {
             var nodeTypeMap = Topology.Node.NodeTypeMap;
 
             var isSupportted = false;
@@ -219,7 +220,7 @@
             }
 
             for (var i = 0; i < this.childNodes.length; i++) {
-                this.childNodes[i].drawSelectedRect(ctx, nodeType);
+                this.childNodes[i].drawDragSelectedRect(ctx, nodeType);
             }
 
         };
@@ -267,10 +268,6 @@
             ctx.rotate(node.rotate);
             ctx.scale(node.scala, node.scala);
 
-            if (node.isSelected() || node.isFocus()) {
-                node.drawSelectedRect(ctx);
-            }
-
             var image = node.getTypeImage(type);
             if (image != null) {
                 ctx.drawImage(image, -node.width * ratio / 2, -node.height * ratio / 2, node.width * ratio, node.height * ratio);
@@ -287,20 +284,41 @@
             }
             ctx.restore();
 
+            if (node.isSelected() || node.isFocus()) {
+                node.drawSelectedRect(ctx);
+            }
+
             if (node.childNodes.length > 0) {
                 for (var i = 0; i < node.childNodes.length; i++) {
                     var childNode = node.childNodes[i];
-                    childNode.draw(ctx);
-                    var link = new Topology.FabricLink(node, childNode, node.childArrangeType);
-                    link.lineWidth = 1;
-                    link.strokeColor = '97,97,97';
-                    link.draw(ctx);
-
+                    if(!childNode.isDragged){
+                        childNode.draw(ctx);
+                        var link = new Topology.FabricLink(node, childNode, node.childArrangeType);
+                        link.lineWidth = 1;
+                        link.strokeColor = '97,97,97';
+                        link.draw(ctx);
+                    }
                 }
             }
         };
+        node.drawSelectedRect = function (ctx) {
+            var textWidth = ctx.measureText(this.getName()).width;
+            var w = Math.max(this.width, textWidth);
+            ctx.save();
+            ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(16,67,232, 0.9)';
+            //ctx.fillStyle = 'rgba(168,202,236,0.1)';
+            ctx.rect(-w / 2 - 3, -this.height / 2 - 2, w + 6, this.height + 16);
+            //ctx.fill();
+            ctx.stroke();
+            ctx.closePath();
+            ctx.restore();
+        };
+
         return node;
     }
+
 
 
     Topology.Node = Node;

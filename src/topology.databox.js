@@ -112,11 +112,45 @@
         this.selectedElements = [];
     };
 
+    DataBox.prototype.getNodeByXY = function (rootNode, x, y, excludeRootNode) {
+        var allChildNodes = [];
+        if (excludeRootNode){
+
+        }else{
+            allChildNodes.push(rootNode);
+        }
+
+        this.getAllChildNodes(allChildNodes, rootNode);
+
+
+        var e = null;
+        for (var i = allChildNodes.length - 1; i >= 0; i--) {
+            var node = allChildNodes[i];
+            if (x > node.x && x < node.x + node.width && y > node.y && y < node.y + node.height) {
+                e = node;
+                break;
+            }
+        }
+        return e;
+    };
+
+
+
+    //childNodes []
+    DataBox.prototype.getAllChildNodes = function (allChildNodes, node) {
+        for (var i = 0; i < node.childNodes.length; i++) {
+            allChildNodes.push(node.childNodes[i]);
+            if (node.childNodes[i].childNodes.length > 0){
+                this.getAllChildNodes(allChildNodes,node.childNodes[i]);
+            }
+        }
+    };
+
     DataBox.prototype.drawMatchedNodes = function (nodeType) {
         var box = this;
         for (var i = 0; i < box.nodes.length; i++) {
             var rootNode = box.nodes[i];
-            rootNode.drawSelectedRect(this.ctx, nodeType)
+            rootNode.drawDragSelectedRect(this.ctx, nodeType)
         }
     };
 
@@ -660,6 +694,77 @@
             this.rootNode.draw(this.ctx);
 
         };
+
+        databox.mousedown = function (event) {
+            var box = this;
+            var xy = Topology.util.getXY(box, event);
+            var x = xy.x;
+            var y = xy.y;
+
+            var selectedNode = box.getNodeByXY(box.rootNode,x, y);
+
+            if (box.currElement) {
+                box.currElement.cancleSelected();
+                box.currElement = null;
+            }
+
+            if (selectedNode != null) {
+                selectedNode.onMousedown({x: x, y: y, context: box});
+                box.currElement = selectedNode;
+            } else if (box.currElement) {
+                box.currElement.cancleSelected();
+                box.currElement = null;
+            }
+
+            box.startDragMouseX = x;
+            box.startDragMouseY = y;
+
+            box.isOnMouseDown = true;
+            box.updateView();
+        };
+
+        databox.mousemove = function (event) {
+            var box = this;
+            var xy = Topology.util.getXY(box, event);
+            var x = xy.x;
+            var y = xy.y;
+
+            if (box.currElement && box.isOnMouseDown && box.currElement.isDragable()) {
+                this.canvas.style.cursor='move';
+                var dragedNode = box.currElement;
+                var parentNode = dragedNode.parentNode;
+                dragedNode.isDragged=true;
+                dragedNode.cancleSelected();
+
+                box.updateView();
+                dragedNode.setLocation(x - dragedNode.width / 2,y -  dragedNode.height / 2);
+                dragedNode.calculateNodePosition();
+                dragedNode.draw(this.ctx);
+            }
+        };
+
+        databox.mouseup = function (event) {
+            this.canvas.style.cursor='auto';
+            var box = this;
+            var xy = Topology.util.getXY(this, event);
+            var x = xy.x;
+            var y = xy.y;
+            var dx = (x - box.startDragMouseX);
+            var dy = (y - box.startDragMouseY);
+
+            box.startDragMouseX = null;
+
+            if (box.currElement) {
+                var dragedNode = box.currElement;
+                var parentNode = dragedNode.parentNode;
+                dragedNode.isDragged=false;
+            }
+
+            box.updateView();
+            box.isOnMouseDown = false;
+        };
+
+
         return databox;
     }
 
