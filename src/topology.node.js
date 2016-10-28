@@ -46,7 +46,9 @@
         this.alpha = 2;
         this.scala = 1;
         this.rotate = 0;
-        this.childNodes = [];
+        this.childNode = null;
+        this.next = null;
+        this.prev = null;
         this.parentNode = null;
         this.isDragged = false;
         this.childArrangeType = 'x';
@@ -60,8 +62,30 @@
 
     Node.prototype.addChildNode = function (node, box) {
         node.parentNode = this;
-        this.childNodes.push(node);
+        if(this.childNode == null){
+            this.childNode = node;
+            node.prev=null;
+        }else{
+            var tempNode = this.childNode;
+            while(tempNode.next != null){
+                tempNode = tempNode.next;
+            }
+            tempNode.next = node;
+            node.prev = tempNode;
+        }
         box.nodes.push(node);
+    };
+
+    Node.prototype.getChildNodeLength = function () {
+        var childNodeLength = 0;
+        if (this.childNode != null){
+            var tempNode = this.childNode;
+            while(tempNode != null){
+                childNodeLength++;
+                tempNode = tempNode.next;
+            }
+        }
+        return childNodeLength;
     };
 
     Node.prototype.drawText = function (ctx) {
@@ -187,7 +211,7 @@
     function InheritNode(name, type) {
         var node = new Node(name, type);
 
-        node.drawDragSelectedRect = function (ctx, nodeType) {
+        node.drawAddDragSelectedRect = function (ctx, nodeType) {
             var nodeTypeMap = Topology.Node.NodeTypeMap;
 
             var isSupportted = false;
@@ -219,15 +243,62 @@
                 ctx.restore();
             }
 
-            for (var i = 0; i < this.childNodes.length; i++) {
-                this.childNodes[i].drawDragSelectedRect(ctx, nodeType);
+            if(this.childNode != null){
+                var selectChildNode = this.childNode;
+                while(selectChildNode != null){
+                    selectChildNode.drawAddDragSelectedRect(ctx, nodeType);
+                    selectChildNode = selectChildNode.next;
+                }
             }
 
         };
 
+        node.drawAddDragSelectedRect = function (ctx, nodeType) {
+            var nodeTypeMap = Topology.Node.NodeTypeMap;
+
+            var isSupportted = false;
+            for (var j in nodeTypeMap) {
+                if (nodeTypeMap[j].id == nodeType) {
+                    var supportedTypes = nodeTypeMap[j].map;
+                    if (supportedTypes) {
+                        for (var t in supportedTypes) {
+                            if (supportedTypes[t] == this.type) {
+                                isSupportted = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (isSupportted) {
+                var textWidth = ctx.measureText(this.getName()).width;
+                var w = Math.max(this.width, textWidth);
+                ctx.save();
+                ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(248,31,72, 0.9)';
+                //ctx.fillStyle = 'rgba(168,202,236,0.1)';
+                ctx.rect(-w / 2 - 3, -this.height / 2 - 2, w + 6, this.height + 16);
+                //ctx.fill();
+                ctx.stroke();
+                ctx.closePath();
+                ctx.restore();
+            }
+
+            if(this.childNode != null){
+                var selectChildNode = this.childNode;
+                while(selectChildNode != null){
+                    selectChildNode.drawAddDragSelectedRect(ctx, nodeType);
+                    selectChildNode = selectChildNode.next;
+                }
+            }
+
+        };
+        
         node.calculateNodePosition = function () {
             var node = this;
-            if (node.childNodes.length > 0) {
+            var childNodeLength = this.getChildNodeLength();
+            if (childNodeLength > 0) {
                 var x = node.x;
                 var y = node.y;
 
@@ -235,25 +306,27 @@
                     //横向的排列
                     var horizon_x_inc = 100;
                     var horizon_y_inc = 200;
-                    var topY = y - ((node.childNodes.length - 1) * horizon_y_inc) / 2;
-                    for (var i = 0; i < node.childNodes.length; i++) {
-                        var childNode = node.childNodes[i];
+                    var topY = y - ((childNodeLength - 1) * horizon_y_inc) / 2;
+                    var childNode = node.childNode;
+                    for (var i = 0; i < childNodeLength; i++) {
                         var x_child = x + horizon_x_inc;
                         var y_child = topY + i * horizon_y_inc;
                         childNode.setLocation(x_child, y_child);
                         childNode.calculateNodePosition();
+                        childNode = childNode.next;
 
                     }
                 } else if (node.childArrangeType == 'y') {
                     //纵向的排列
                     var vertical_x_inc = 100;
                     var vertical_y_inc = 100;
-                    for (var i = 0; i < node.childNodes.length; i++) {
-                        var childNode = node.childNodes[i];
+                    var childNode = node.childNode;
+                    for (var i = 0; i < childNodeLength; i++) {
                         var x_child = x + (i + 1) * vertical_x_inc;
                         var y_child = y + vertical_y_inc;
                         childNode.setLocation(x_child, y_child);
                         childNode.calculateNodePosition();
+                        childNode = childNode.next;
                     }
                 }
             }
@@ -288,9 +361,9 @@
                 node.drawSelectedRect(ctx);
             }
 
-            if (node.childNodes.length > 0) {
-                for (var i = 0; i < node.childNodes.length; i++) {
-                    var childNode = node.childNodes[i];
+            if (node.childNode != null) {
+                var childNode = node.childNode;
+                while (childNode != null) {
                     if(!childNode.isDragged){
                         childNode.draw(ctx);
                         var link = new Topology.FabricLink(node, childNode, node.childArrangeType);
@@ -298,6 +371,7 @@
                         link.strokeColor = '97,97,97';
                         link.draw(ctx);
                     }
+                    childNode = childNode.next;
                 }
             }
         };

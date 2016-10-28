@@ -60,22 +60,22 @@
             var routeNode =  new Topology.InheritNode('路由器', Topology.Node.NodeType.Route);
             lbNode.addChildNode(routeNode,box);
 
-            var privateNetNode1 =  new Topology.InheritNode('内网', Topology.Node.NodeType.PrivateNet);
+            var privateNetNode1 =  new Topology.InheritNode('内网1', Topology.Node.NodeType.PrivateNet);
             routeNode.addChildNode(privateNetNode1,box);
 
-            var privateNetNode2 =  new Topology.InheritNode('内网', Topology.Node.NodeType.PrivateNet);
+            var privateNetNode2 =  new Topology.InheritNode('内网2', Topology.Node.NodeType.PrivateNet);
             routeNode.addChildNode(privateNetNode2,box);
 
 //            var privateNetNode3 =  new Topology.InheritNode('内网', Topology.Node.NodeType.PrivateNet);
 //            routeNode.addChildNode(privateNetNode3,box);
 
-            privateNetNode1.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
-            privateNetNode1.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
-            privateNetNode1.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
+            privateNetNode1.addChildNode(new Topology.InheritNode('web服务1', Topology.Node.NodeType.Host),box);
+            privateNetNode1.addChildNode(new Topology.InheritNode('web服务2', Topology.Node.NodeType.Host),box);
+            privateNetNode1.addChildNode(new Topology.InheritNode('web服务3', Topology.Node.NodeType.Host),box);
 
-            privateNetNode2.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
-            privateNetNode2.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
-            privateNetNode2.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
+            privateNetNode2.addChildNode(new Topology.InheritNode('web服务4', Topology.Node.NodeType.Host),box);
+            privateNetNode2.addChildNode(new Topology.InheritNode('web服务5', Topology.Node.NodeType.Host),box);
+            privateNetNode2.addChildNode(new Topology.InheritNode('web服务6', Topology.Node.NodeType.Host),box);
 
 //            privateNetNode3.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);
 //            privateNetNode3.addChildNode(new Topology.InheritNode('web服务', Topology.Node.NodeType.Host),box);

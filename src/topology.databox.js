@@ -114,9 +114,9 @@
 
     DataBox.prototype.getNodeByXY = function (rootNode, x, y, excludeRootNode) {
         var allChildNodes = [];
-        if (excludeRootNode){
+        if (excludeRootNode) {
 
-        }else{
+        } else {
             allChildNodes.push(rootNode);
         }
 
@@ -134,23 +134,23 @@
         return e;
     };
 
-
-
-    //childNodes []
     DataBox.prototype.getAllChildNodes = function (allChildNodes, node) {
-        for (var i = 0; i < node.childNodes.length; i++) {
-            allChildNodes.push(node.childNodes[i]);
-            if (node.childNodes[i].childNodes.length > 0){
-                this.getAllChildNodes(allChildNodes,node.childNodes[i]);
+        if (node.childNode != null) {
+            var tempNode = node.childNode;
+            while (tempNode != null) {
+                allChildNodes.push(tempNode);
+                this.getAllChildNodes(allChildNodes, tempNode);
+                tempNode = tempNode.next;
             }
         }
+
     };
 
     DataBox.prototype.drawMatchedNodes = function (nodeType) {
         var box = this;
         for (var i = 0; i < box.nodes.length; i++) {
             var rootNode = box.nodes[i];
-            rootNode.drawDragSelectedRect(this.ctx, nodeType)
+            rootNode.drawAddDragSelectedRect(this.ctx, nodeType)
         }
     };
 
@@ -196,15 +196,42 @@
         this.updateView();
     };
 
-    DataBox.prototype.getMaxHeightNode = function (node, currentMaxNode) {
-        if (node.y < currentMaxNode.y) {
-            return node;
-        } else {
-            return currentMaxNode;
+    DataBox.prototype.addDraggedNodes = function (ev, draggedNode) {
+        var box = this;
+        var xy = Topology.util.getXY(box, ev);
+        var x = xy.x;
+        var y = xy.y;
+
+        var selectedNode = this.getSelectedNode(x, y, draggedNode.parentNode);
+
+        if (selectedNode != null && !selectedNode.isDragged) {
+            if (draggedNode.prev != null) {
+                draggedNode.prev.next = draggedNode.next;
+                if(draggedNode.next != null){
+                    draggedNode.next.prev = draggedNode.prev;
+                }
+            } else {
+                draggedNode.parentNode.childNode = draggedNode.next;
+                if( draggedNode.next != null){
+                    draggedNode.next.prev = null;
+                }
+            }
+
+            draggedNode.next = selectedNode.next;
+            if (selectedNode.next != null){
+                selectedNode.next.prev = draggedNode;
+            }
+            selectedNode.next = draggedNode;
+            draggedNode.prev = selectedNode;
         }
-    }
+        draggedNode.isDragged = false;
+    };
+
 
     DataBox.prototype.getSelectedNode = function (x, y, node, nodeType) {
+        if(node.isDragged){
+            return null;
+        }
         var box = this;
         var nodeTypeMap = Topology.Node.NodeTypeMap;
 
@@ -212,63 +239,84 @@
         var w = Math.max(node.width, textWidth);
 
         var measureMinX = node.x - 3;
-        var measureMaxX = node.x + node.width +3;
-        if (node.width < textWidth){
-            measureMinX = measureMinX - (textWidth - node.width)/2 - 3;
+        var measureMaxX = node.x + node.width + 3;
+        if (node.width < textWidth) {
+            measureMinX = measureMinX - (textWidth - node.width) / 2 - 3;
             measureMaxX = measureMinX + textWidth + 3;
         }
 
         var measureMinY = node.y - 2;
-        var measureMaxY = node.y +node.height + 16;
+        var measureMaxY = node.y + node.height + 16;
 
-        if (x > measureMinX && x < measureMaxX  && y > measureMinY && y < measureMaxY) {
-            var isSupportted = false;
-            for (var j in nodeTypeMap) {
-                if (nodeTypeMap[j].id == nodeType) {
-                    var supportedTypes = nodeTypeMap[j].map;
-                    if (supportedTypes) {
-                        for (var t in supportedTypes) {
-                            if (supportedTypes[t] == node.type) {
-                                isSupportted = true;
-                                return node;
-                            }
-                        }
-                    }
-                }
-            }
-            if (!isSupportted) {
-                alert("资源不可放在该位置");
-                return null;
-            }
-
-        } else {
-            for (var i = 0; i < node.childNodes.length; i++) {
-                var childNode = this.getSelectedNode(x, y, node.childNodes[i], nodeType);
-                if (childNode != null) {
-                    var isSupportted = false;
-                    for (var j in nodeTypeMap) {
-                        if (nodeTypeMap[j].id == nodeType) {
-                            var supportedTypes = nodeTypeMap[j].map;
-                            if (supportedTypes) {
-                                for (var t in supportedTypes) {
-                                    if (supportedTypes[t] == childNode.type) {
-                                        isSupportted = true;
-                                        return childNode;
-                                    }
+        if (x > measureMinX && x < measureMaxX && y > measureMinY && y < measureMaxY) {
+            if (nodeType) {
+                var isSupportted = false;
+                for (var j in nodeTypeMap) {
+                    if (nodeTypeMap[j].id == nodeType) {
+                        var supportedTypes = nodeTypeMap[j].map;
+                        if (supportedTypes) {
+                            for (var t in supportedTypes) {
+                                if (supportedTypes[t] == node.type) {
+                                    isSupportted = true;
+                                    return node;
                                 }
                             }
                         }
                     }
-                    if (!isSupportted) {
-                        alert("资源不可放在该位置");
-                        return null;
+                }
+                if (!isSupportted) {
+                    alert("资源不可放在该位置");
+                    return null;
+                }
+            } else {
+                return node;
+            }
+
+
+        } else {
+            if (node.childNode != null) {
+                var tempNode = node.childNode;
+                while (tempNode != null) {
+                    var childNode = this.getSelectedNode(x, y, tempNode, nodeType);
+                    if (childNode != null) {
+                        if (nodeType) {
+                            var isSupportted = false;
+                            for (var j in nodeTypeMap) {
+                                if (nodeTypeMap[j].id == nodeType) {
+                                    var supportedTypes = nodeTypeMap[j].map;
+                                    if (supportedTypes) {
+                                        for (var t in supportedTypes) {
+                                            if (supportedTypes[t] == childNode.type) {
+                                                isSupportted = true;
+                                                return childNode;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (!isSupportted) {
+                                alert("资源不可放在该位置");
+                                return null;
+                            }
+                        } else {
+                            return childNode;
+                        }
                     }
+                    tempNode = tempNode.next;
                 }
             }
         }
         return null;
     };
 
+
+    DataBox.prototype.getMaxHeightNode = function (node, currentMaxNode) {
+        if (node.y < currentMaxNode.y) {
+            return node;
+        } else {
+            return currentMaxNode;
+        }
+    }
 
     DataBox.prototype.mousedown = function (event) {
         var box = this;
@@ -701,7 +749,7 @@
             var x = xy.x;
             var y = xy.y;
 
-            var selectedNode = box.getNodeByXY(box.rootNode,x, y);
+            var selectedNode = box.getNodeByXY(box.rootNode, x, y);
 
             if (box.currElement) {
                 box.currElement.cancleSelected();
@@ -709,7 +757,7 @@
             }
 
             if (selectedNode != null) {
-                selectedNode.onMousedown({x: x, y: y, context: box});
+                //selectedNode.onMousedown({x: x, y: y, context: box});
                 box.currElement = selectedNode;
             } else if (box.currElement) {
                 box.currElement.cancleSelected();
@@ -730,38 +778,55 @@
             var y = xy.y;
 
             if (box.currElement && box.isOnMouseDown && box.currElement.isDragable()) {
-                this.canvas.style.cursor='move';
+                this.canvas.style.cursor = 'move';
                 var dragedNode = box.currElement;
-                var parentNode = dragedNode.parentNode;
-                dragedNode.isDragged=true;
+                dragedNode.isDragged = true;
                 dragedNode.cancleSelected();
 
                 box.updateView();
-                dragedNode.setLocation(x - dragedNode.width / 2,y -  dragedNode.height / 2);
+                dragedNode.setLocation(x - dragedNode.width / 2, y - dragedNode.height / 2);
                 dragedNode.calculateNodePosition();
                 dragedNode.draw(this.ctx);
+
+                var selectRectNode = dragedNode.parentNode.childNode;
+                while(selectRectNode != null){
+                    if(!selectRectNode.isDragged){
+                        var textWidth = this.ctx.measureText(selectRectNode.getName()).width;
+                        var w = Math.max(selectRectNode.width, textWidth);
+                        this.ctx.save();
+                        this.ctx.translate(selectRectNode.x + selectRectNode.width / 2, selectRectNode.y + selectRectNode.height / 2);
+                        this.ctx.beginPath();
+                        this.ctx.strokeStyle = 'rgba(248,31,72, 0.9)';
+                        //ctx.fillStyle = 'rgba(168,202,236,0.1)';
+                        this.ctx.rect(-w / 2 - 3, -selectRectNode.height / 2 - 2, w + 6, selectRectNode.height + 16);
+                        //ctx.fill();
+                        this.ctx.stroke();
+                        this.ctx.closePath();
+                        this.ctx.restore();
+                    }
+                    selectRectNode = selectRectNode.next;
+                }
+
+
             }
         };
 
         databox.mouseup = function (event) {
-            this.canvas.style.cursor='auto';
+            this.canvas.style.cursor = 'auto';
             var box = this;
             var xy = Topology.util.getXY(this, event);
             var x = xy.x;
             var y = xy.y;
-            var dx = (x - box.startDragMouseX);
-            var dy = (y - box.startDragMouseY);
 
             box.startDragMouseX = null;
 
             if (box.currElement) {
                 var dragedNode = box.currElement;
-                var parentNode = dragedNode.parentNode;
-                dragedNode.isDragged=false;
+                this.addDraggedNodes(event, dragedNode);
             }
-
-            box.updateView();
+            box.currElement = null;
             box.isOnMouseDown = false;
+            box.updateView();
         };
 
 
